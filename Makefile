@@ -1,4 +1,4 @@
-start-server:
+start-backend:
 	npm run server
 .PHONY: start-server
 

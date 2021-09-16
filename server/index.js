@@ -17,7 +17,14 @@ const start = async () => {
 
   server.get('/person/:id', async (request, reply) => {
     const { id } = request.params;
-    return state.find((person) => person.id === id);
+    const person = state.find((person) => person.id === id);
+    if (!person) {
+      const error = new Error(`Error: not found person with id ${id}`);
+      reply.code(404);
+      return error;
+    }
+
+    return person;
   });
 
   server.post('/person', async (request, reply) => {
@@ -25,6 +32,18 @@ const start = async () => {
 
     state.push(newPerson);
     return newPerson;
+  });
+
+  server.put('/person/:id', async (request, reply) => {
+    const { id } = request.params;
+    const newPersonData = JSON.parse(request.body);
+    const personIndex = state.findIndex((person) => person.id === id);
+    if (!personIndex) {
+      const error = new Error(`Error: not found person with id ${id}`);
+      reply.code(404);
+      return error;
+    }
+    state[personIndex] = { ...newPersonData, id };
   });
 
   try {
